@@ -1,0 +1,40 @@
+services:
+  oauth-client:
+    build: ./oauth-client
+    container_name: oauth-client
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./oauth-client:/usr/src/app
+      - /usr/src/app/node_modules
+    networks:
+      - oauth-network
+    env_file:
+      - .env
+
+  oauth-provider:
+    build: ./oauth-provider
+    container_name: oauth-provider
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./oauth-provider:/usr/src/app
+      - /usr/src/app/node_modules
+    networks:
+      - oauth-network
+    env_file:
+      - .env
+
+  oauth-bot:
+    build: ./bot
+    container_name: oauth-bot
+    ports:
+      - "8888:8888"
+    networks:
+      - oauth-network
+    env_file:
+      - .env    
+
+networks:
+  oauth-network:
+    driver: bridge

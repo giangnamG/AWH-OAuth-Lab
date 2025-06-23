@@ -1,0 +1,3 @@
+Flask
+flask-cors
+playwright==1.52.0

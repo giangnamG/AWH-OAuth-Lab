@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OAuth Client</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      padding-top: 2rem;
+    }
+
+    .jumbotron {
+      padding: 2rem;
+      background-color: #f8f9fa;
+      border-radius: 0.3rem;
+      margin-bottom: 2rem;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="/">OAuth Client</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+          aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <div class="mx-auto my-2 my-lg-0">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#sendLinkModal">
+              Gửi Link cho Bot
+            </button>
+          </div>
+
+          <!-- Các mục menu bên phải -->
+          <ul class="navbar-nav ms-auto">
+            <% if (user) { %>
+              <li class="nav-item">
+                <a class="nav-link" href="/dashboard">Dashboard</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/user/profile">Profile</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/auth/logout">Logout</a>
+              </li>
+              <% } else { %>
+                <li class="nav-item">
+                  <a class="nav-link" href="/auth/login">Login with OAuth Provider</a>
+                </li>
+                <% } %>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="jumbotron">
+      <h1 class="display-4">Todo List App</h1>
+      <p class="lead">A simple todo list application that uses OAuth 2.0 for authentication.</p>
+      <hr class="my-4">
+      <% if (user) { %>
+        <p>You are logged in as <strong>
+            <%= user.username %>
+          </strong>.</p>
+        <a class="btn btn-primary" href="/dashboard">Go to Dashboard</a>
+        <% } else { %>
+          <p>Please login with your OAuth Provider account to access your personal todo list.</p>
+          <a class="btn btn-primary" id="oauth-login-button" href="#">Login with OAuth Provider</a>
+          <% } %>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6">
+        <div class="card mb-4">
+          <div class="card-header">
+            <h5 class="card-title mb-0">About This App</h5>
+          </div>
+          <div class="card-body">
+            <p class="card-text">This Todo List App allows you to create, manage, and track your tasks. Your todos are
+              private and only accessible after you authenticate with your OAuth Provider account.</p>
+            <p class="card-text">Features include:</p>
+            <ul>
+              <li>Create new tasks</li>
+              <li>Mark tasks as completed</li>
+              <li>Delete tasks</li>
+              <li>Secure authentication via OAuth 2.0</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card mb-4">
+          <div class="card-header">
+            <h5 class="card-title mb-0">How it works</h5>
+          </div>
+          <div class="card-body">
+            <p class="card-text">This client implements the Authorization Code flow, which is the most common OAuth 2.0
+              flow. It involves the following steps:</p>
+            <ol>
+              <li>The client redirects the user to the authorization server</li>
+              <li>The user authenticates and grants permissions</li>
+              <li>The authorization server redirects back to the client with an authorization code</li>
+              <li>The client exchanges the code for an access token</li>
+              <li>The client uses the access token to access protected resources</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="oauth-modal-container"
+    style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
+    <div
+      style="position: relative; width: 80%; max-width: 600px; height: 80%; max-height: 600px; background-color: white; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+      <button id="oauth-modal-close"
+        style="position: absolute; top: 10px; right: 10px; background: none; border: none; font-size: 24px; cursor: pointer; z-index: 1001;">&times;</button>
+      <iframe id="oauth-modal-iframe" src="about:blank" style="width: 100%; height: 100%; border: none;"></iframe>
+    </div>
+  </div>
+
+
+  <!-- Submit Form For Bot-->
+
+  <div class="modal fade" id="sendLinkModal" tabindex="-1" aria-labelledby="sendLinkModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="sendLinkModalLabel">Gửi Link Đến Bot</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="linkForm">
+            <div class="mb-3">
+              <label for="linkInput" class="form-label">Nhập link bạn muốn gửi:</label>
+              <input type="url" class="form-control" id="linkInput" name="link" placeholder="https://example.com"
+                required>
+              <div class="form-text">Bot sẽ nhận được link này.</div>
+            </div>
+            <div id="formMessage" class="mt-2"></div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+          <button type="submit" form="linkForm" class="btn btn-primary" id="submitLinkButton">
+            <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+            <span>Gửi Link</span> <!-- Đã sửa: bọc text trong span -->
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS Bundle (bao gồm Popper) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+    crossorigin="anonymous"></script>
+
+
+  <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> -->
+  <script src="/js/oauth-modal.js"></script>
+  <script src="/js/sendbot.js"></script>
+</body>
+
+</html>

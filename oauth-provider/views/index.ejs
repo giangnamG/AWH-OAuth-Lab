@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OAuth Provider</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      padding-top: 2rem;
+    }
+    .jumbotron {
+      padding: 2rem;
+      background-color: #f8f9fa;
+      border-radius: 0.3rem;
+      margin-bottom: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="/">OAuth Provider</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <% if (user) { %>
+              <li class="nav-item">
+                <a class="nav-link" href="/user/profile">Profile</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/auth/logout">Logout</a>
+              </li>
+            <% } else { %>
+              <li class="nav-item">
+                <a class="nav-link" href="/auth/login">Login</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/auth/register">Register</a>
+              </li>
+            <% } %>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="jumbotron">
+      <h1 class="display-4">Welcome to OAuth Provider</h1>
+      <p class="lead">This is a simple OAuth 2.0 provider for demonstration purposes.</p>
+      <hr class="my-4">
+      <% if (user) { %>
+        <p>You are logged in as <strong><%= user.username %></strong>.</p>
+        <a class="btn btn-primary" href="/user/profile">View Profile</a>
+      <% } else { %>
+        <p>Please register or login to get started.</p>
+        <a class="btn btn-primary me-2" href="/auth/register">Register</a>
+        <a class="btn btn-outline-primary" href="/auth/login">Login</a>
+      <% } %>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6">
+        <div class="card mb-4">
+          <div class="card-header">
+            <h5 class="card-title mb-0">What is OAuth 2.0?</h5>
+          </div>
+          <div class="card-body">
+            <p class="card-text">OAuth 2.0 is an authorization framework that enables a third-party application to obtain limited access to an HTTP service, either on behalf of a resource owner by orchestrating an approval interaction between the resource owner and the HTTP service, or by allowing the third-party application to obtain access on its own behalf.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card mb-4">
+          <div class="card-header">
+            <h5 class="card-title mb-0">How it works</h5>
+          </div>
+          <div class="card-body">
+            <p class="card-text">This provider implements the Authorization Code flow, which is the most common OAuth 2.0 flow. It involves the following steps:</p>
+            <ol>
+              <li>The client redirects the user to the authorization server</li>
+              <li>The user authenticates and grants permissions</li>
+              <li>The authorization server redirects back to the client with an authorization code</li>
+              <li>The client exchanges the code for an access token</li>
+              <li>The client uses the access token to access protected resources</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

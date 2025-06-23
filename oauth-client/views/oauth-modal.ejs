@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OAuth Authentication</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background-color: #f8f9fa;
+      padding: 20px;
+    }
+    .auth-container {
+      max-width: 500px;
+      width: 100%;
+      text-align: center;
+    }
+    .spinner-border {
+      width: 3rem;
+      height: 3rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-container">
+    <div class="card">
+      <div class="card-body">
+        <h3 class="card-title mb-4">Connecting to OAuth Provider</h3>
+        <div class="d-flex justify-content-center mb-4">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </div>
+        <p class="card-text">You are being redirected to the OAuth provider for authentication.</p>
+        <p class="card-text text-muted">Please wait...</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    window.onload = function() {
+      setTimeout(function() {
+        const authUrl = new URL('<%= oauthConfig.authorization_endpoint %>');
+        authUrl.searchParams.append('client_id', '<%= oauthConfig.client_id %>');
+        authUrl.searchParams.append('redirect_uri', '<%= modalRedirectUri %>');
+        authUrl.searchParams.append('response_type', 'code');
+        authUrl.searchParams.append('state', '<%= state %>');
+        authUrl.searchParams.append('scope', 'profile email');
+        
+        window.location.href = authUrl.toString();
+      }, 1000);
+    };
+  </script>
+</body>
+</html>
